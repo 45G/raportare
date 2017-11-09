@@ -1,2 +1,52 @@
+\section{Imaginea Android}
+
+În acest proiect s-au folosit dispozitive mobile Samsung Galaxy S7 Edge. Acestea rulează în mod implicit o imagine a sistemului de operare Android de la Samsung, care include implementarea protocolului MPTCP în kernel. 
+
+Imaginea de Android (stock ROM) folosită este identificată prin urmatoarele:
+\begin{enumerate}
+	\item Model number: SM-G935F
+	\item Baseband version: G935FXXU1DQA3
+	\item Build number: NRD90M.G935FXXU1DQAS
+	\item Android version: 7.0
+\end{enumerate}
+
+Imaginea de Android stock este rescrisă folosind utilitarul Odin, în timp ce dispozitivul este în modul \texttt{Download}. Astfel, se va rescrie partițiile boot, system și recovery ale dispozitivului. Prin această metodă, telefonul este adus înapoi la starea inițială, în cazul întâlnirii unei erori pe parcursul root-ării dispozitivului. 
+
 TODO
+
+\section{Rootarea dispozitivului mobil}
+
+Pentru activarea și configurarea protocolului MPTCP este nevoie de un telefon rootat deoarece comenzile necesare nu pot fi rulate decat din contul root (sysctl, ip rule, ip route).
+
+Pentru root-area dispozitivului este nevoie de utilitarele Odin, TWRP și SuperSU. Se foloseste imaginea de recovery TWRP pentru modelul \emph{hero2lte}. Se scrie această imagine folosind Odin, în timp ce telefonul este în modul \texttt{Download}. Astfel, se va rescrie partiția de recovery a dispozitivului. 
+
+Apoi se intră în modul \texttt{Recovery} al telefonului pentru a accesa meniul aplicației TWRP. Se formatează partiția de date și se instalează aplicația SuperSU care rootează telefonul. În final se boot-ează telefonul în modul normal. Apoi, în adb shell se poate introduce comanda \texttt{su} pentru a intra în contul utilizatorului root.
+
+TODO
+
+\section{Configurarea protocolului MPTCP}
+
+Configurarea protocolului MPTCP se face prin următorii pași:
+\begin{enumerate}
+	\item Se activează WiFi și LTE în Settings
+	\item Se activează opțiunea Settings $->$ Developer Options $->$ Mobile Data Always Active
+	\item Se activează protocolul MPTCP folosind utilitarul \texttt{sysctl}
+	\item Se crează câte un tabel de rutare diferit pentru fiecare interfață, care vor fi folosite pentru rutarea pe baza adresei sursă, prin comanda \texttt{ip rule}
+	\item Se configurează cele două tabele de rutare prin adaugarea unei rute default, folosind gateway-ul fiecărei conexiuni, prin comanda \texttt{ip route} 
+	\item Se adaugă o rută default globală pentru traficul normal în Internet, folosind gateway-ul uneia din cele două conexiuni, prin comanda \texttt{ip route}
+\end{enumerate}
+Pașii 3-6 se pot automatiza sub forma unui script bash, care se poate rula după boot-area dispozitivului sau la cererea utilizatorului, atunci când dorește activarea MPTCP. 
+
+De asemenea, la dezactivarea unei interfețe sau la pierderea conexiunii pe o interfață, trebuie șteasă tabela de rutare asociată cu acea interfață, prin comanda \texttt{ip rule}. 
+
+TODO
+
+\section{Aplicația de gestiune a conexiunilor de rețea}
+
+A fost dezvoltată o aplicație Android care monitorizează starea conexiunilor WiFi și LTE, și reconfigurează tabelele de rutare pentru MPTCP atunci cand se modifică starea unei conexiuni. De asemenea, poate fi folosită pentru vizualizarea statisticilor colectate sau pentru rularea scripturilor/executabilelor. 
+
+Funcționalitatea de bază a aplicației este de a activa și configura MPTCP pentru folosirea celor două interfețe de rețea. 
+
+TODO
+
 
