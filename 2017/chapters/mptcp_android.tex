@@ -57,4 +57,64 @@ Evenimentele de conectare/deconectare a interfețelor de rețea, datele colectat
 
 Informațiile din baza de date pot fi analizate și corelate pentru determinarea procentului de timp în care utilizatorul are acces la ambele interfețe de rețea, disponibilitatea lor atunci când utilizatorul dorește să le utilizeze, și perfomanța acestora în  acele momente.
 
+\section{Testarea soluțiilor proxy}
+
+De cele mai multe ori serverul cu care comunică dispozitivul mobil nu o să folosească protocolul MPTCP. De aceea avem nevoie de folosirea unui proxy, care va fi o stație intermediară cu IP public. Comunicația între dispozitivul mobil si proxy se face prin MPTCP iar între proxy si server se va folosi în general TCP. Dispozitivul mobil este conectat la WiFi și LTE, iar atunci când rulează protocolul MPTCP, va folosi ambele interfețe.
+
+Soluțiile proxy testate în cadrul acestui proiect au fost: 1) Shadowsocks pe dispozitivul mobil și pe stația proxy, 2) ProxyDroid pe dispozitivul mobil și SS5 pe proxy. Toate componentele software folosite sunt open-source. În urma testelor preliminare, s-a constatat că soluția a doua (ProxyDroid și SS5) este cea  mai eficientă din punct de vedere al consumului de resurse pe sistemulul proxy, și folosește SOCKS v4 și v5, în timp ce Shadowsocks folosește un protocol custom.
+
+Scenariile în care s-a facut evaluarea experimentală sunt: 1) comunicația directă între dispozitivul mobil și server folosind protocolul TCP, 2) comunicația directă folosind MPTCP, 3) comunicația prin proxy, folosind MPTCP între mobil și proxy, și TCP între proxy și server, ca în Figura \ref{fig:proxy}. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.7]{figures/45g_proxy.png}
+	\caption{Comunicația prin proxy}
+    	\label{fig:proxy}
+\end{figure}
+
+Metricile folosite au fost round-trip time (RTT) și throughput. S-au folosit scripturi Python și utilitare open-source pentru măsurarea valorilor acestor metrici în scenariile considerate.
+
+Tabelul \ref{tab:rtt} prezintă valorile RTT-ului în cele 3 scenarii. Pentru acest experiment s-a implementat un script Python care trimite date la un server si masoara timpul pana la primirea raspunsului. S-au trimis date de 1000 de ori si s-au calculat statistici pe baza timpului obținut la fiecare iterație (minim, maxim, media, mediana, deviația standard).
+
+Se poate observa că nu există o diferență notabilă între comunicația directă cu TCP și cea cu MPTCP din punct de vedere al RTT-ului. Folosirea unui proxy introduce o latență de aproximativ 3ms, care este o valoare acceptabilă deoarece nu afectează calitatea experienței utilizatorului.
+
+\begin{table}[h]
+\centering
+\caption{RTT}
+\label{tab:rtt}
+\begin{tabular}{l | c c c}
+\hline
+& Interval RTT (ms)  & RTT median (ms) \\
+\hline
+Telefon --(TCP) --$>$ Server  & 3-9 &  7.08  \\
+Telefon --(MPTCP) --$>$ Server  & 3-8  & 7.29 \\
+Telefon --(MPTCP)--$>$ Proxy --(TCP)--$>$ Server & 5-11  & 10.28 \\
+\hline
+\end{tabular}
+\end{table}
+
+Tabelul \ref{tab:throughput} prezintă valorile throughput-ului în cele 3 scenarii. În plus, este considerat cazul în care clientul este o stație desktop și folosește o interfață Ethernet.
+
+\begin{table}[h]
+\centering
+\caption{Throughput}
+\label{tab:throughput}
+\begin{tabular}{l | p{1.5cm} p{1.5cm} p{1.5cm} p{1.5cm}}
+\hline
+& Uplink (median) & Uplink (max) & Downlink (median) & Downlink (max) \\
+\hline
+Stație --(TCP)--$>$ Server & 933 & 945 & 501 & 611 \\
+Telefon --(TCP) --$>$ Server & 357 & 400 & 84 & 100 \\
+Telefon --(MPTCP) --$>$ Server & & & & \\
+Telefon --(TCP)--$>$ Proxy --(TCP)--$>$ Server &  130 & 136 & 349 & 370 \\
+\hline
+\end{tabular}
+\end{table}
+
+TODO
+
+\section{Planul de colectare și corelare al datelor}
+
+TODO
+
 
