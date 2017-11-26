@@ -53,7 +53,7 @@ ConnectivityMonitor colectează informații despre cele doua interfețe, periodi
 
 Tot din aplicație se pot rula scripturi bash, Python sau executabile, pentru evaluarea experimentală a caracteristicilor traficului de rețea (lățime de bandă, lantență, etc.).
 
-Evenimentele de conectare/deconectare a interfețelor de rețea, datele colectate și rezultatele scripturilor sunt salvate in baza de date, care este salvată periodic în cloud, în spațiul de stocare oferit de Firebase. 
+Evenimentele de conectare/deconectare a interfețelor de rețea, datele colectate și rezultatele scripturilor sunt salvate in baza de date, care este salvată periodic în cloud, în spațiul de stocare oferit de Firebase, intr-un folder ce are ca nume IMEI-ul telefonului.
 
 Informațiile din baza de date pot fi analizate și corelate pentru determinarea procentului de timp în care utilizatorul are acces la ambele interfețe de rețea, disponibilitatea lor atunci când utilizatorul dorește să le utilizeze, și perfomanța acestora în  acele momente.
 
@@ -82,7 +82,7 @@ Se poate observa că nu există o diferență notabilă între comunicația dire
 \centering
 \caption{RTT}
 \label{tab:rtt}
-\begin{tabular}{l | c c c}
+\begin{tabular}{l | c c}
 \hline
 & Interval RTT (ms)  & RTT median (ms) \\
 \hline
@@ -104,9 +104,9 @@ Tabelul \ref{tab:throughput} prezintă valorile throughput-ului în cele 3 scena
 & Uplink (median) & Uplink (max) & Downlink (median) & Downlink (max) \\
 \hline
 Stație --(TCP)--$>$ Server & 933 & 945 & 501 & 611 \\
-Telefon --(TCP) --$>$ Server & 357 & 400 & 84 & 100 \\
+Telefon --(TCP) --$>$ Server & & & & \\
 Telefon --(MPTCP) --$>$ Server & & & & \\
-Telefon --(TCP)--$>$ Proxy --(TCP)--$>$ Server &  130 & 136 & 349 & 370 \\
+Telefon --(MPTCP)--$>$ Proxy --(TCP)--$>$ Server & & & & \\
 \hline
 \end{tabular}
 \end{table}
@@ -114,6 +114,50 @@ Telefon --(TCP)--$>$ Proxy --(TCP)--$>$ Server &  130 & 136 & 349 & 370 \\
 TODO
 
 \section{Planul de colectare și corelare al datelor}
+
+Următorul pas este efectuarea unui experiment în care un număr de utilizatori vor folosi în mod normal telefoane, timp de 30 de zile, cu următoarele componente software:
+\begin{itemize}
+	\item Protocolul MPTCP activat
+	\item Aplicația ConnectivityMonitor gestionează conexiunile de WiFi și LTE și configurează tabelele de rutare MPTCP
+	\item Aplicația ProxyDroid trimite tot traficul către un sistem proxy ce rulează SS5 și are MTPCP activat 
+\end{itemize}
+
+Aplicația ConnectivityMonitor va colecta periodic date legate de starea conexiunilor WiFi și LTE. Tabelul \ref{tab:date} include tipurile de date care vor fi colectate în cadrul acestui experiment.
+
+\begin{table}[h]
+\centering
+\caption{Tipuri de date colectate}
+\label{tab:date}
+\begin{tabular}{c | c}
+\hline
+Interfata & Tip de date  \\
+\hline
+WiFi & Evenimente de conectare \\
+ & Evenimente de deconectare \\
+ & Număr de bytes primiți \\
+ & Număr de bytes trimiși \\
+ & RSSI \\
+ & RTT \\
+ & MCS \\
+ & Frecvența \\
+\hline
+LTE & Evenimente de conectare \\
+ & Evenimente de deconectare \\
+ & Număr de bytes primiți \\
+ & Număr de bytes trimiși \\
+ & RSSI \\
+ & CID \\
+ & TAC \\
+\hline
+- & Nivelul bateriei \\
+\hline
+\end{tabular}
+\end{table}
+
+Baza de date, ce va contine valorile colectate, de pe fiecare telefon va fi trimisă periodic în Cloud, în spațiul de stocare Firebase. Datele vor fi extrase și procesate de către o componentă software separată.
+
+Analiza datelor colectate va consta în corelarea dintre evenimentele de conectare/deconectare a interfețelor WiFi/LTE, a calității acestor conexiuni și a traficului realizat de către utilizator. Rezultatele vor indica beneficiile practice aduse de protocolul MPTCP.
+
 
 TODO
 
