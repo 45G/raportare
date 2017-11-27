@@ -101,12 +101,16 @@ Tabelul \ref{tab:throughput} prezintă valorile throughput-ului în cele 3 scena
 \label{tab:throughput}
 \begin{tabular}{l | p{1.5cm} p{1.5cm} p{1.5cm} p{1.5cm}}
 \hline
-& Uplink (median) & Uplink (max) & Downlink (median) & Downlink (max) \\
+& Uplink (average) & Uplink (max) & Downlink (average) & Downlink (max) \\
 \hline
 Stație --(TCP)--$>$ Server & 933 & 945 & 501 & 611 \\
-Telefon --(TCP) --$>$ Server & & & & \\
-Telefon --(MPTCP) --$>$ Server & & & & \\
-Telefon --(MPTCP)--$>$ Proxy --(TCP)--$>$ Server & & & & \\
+Telefon --(TCP) --$>$ Server (mac) & 497 & 516 & 533 & 562 \\
+%Telefon --(TCP) --$>$ Server (s-vm) & 360 (variat) & 489 & 443 & 534 \\
+%Telefon --(MPTCP) --$>$ Server (s-vm) & 232 & 268 & 410 & 542 \\
+Telefon --(TCP)--$>$ Proxy (s-vm) --(TCP)--$>$ Server (mac) & 169  & 200  &  238 & 291   \\
+%Telefon --(TCP)--$>$ Proxy (s-fix) --(TCP)--$>$ Server (mac) & 233 & 287 & 202 & 219 \\
+%Telefon --(MPTCP)--$>$ Proxy (s-vm) --(TCP)--$>$ Server (mac) & 133 & 214 & 234 & 269  \\
+
 \hline
 \end{tabular}
 \end{table}
