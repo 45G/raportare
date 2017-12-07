@@ -1,7 +1,10 @@
 \subsection{SOCKS 5}
 
-Protocolul SOCKS este folosit pentru a crea conexiuni TCP către destinații arbitrare folosind un proxy.
-În ultima versiune standardizată a protocolului (versiunea 5), durează doua RTT-uri (sau 3, dacă se face și autentificare) până când datele pot circula între client și server.
+Protocolul SOCKS este folosit pentru a crea conexiuni TCP către
+destinații arbitrare folosind un proxy.  În ultima versiune
+standardizată a protocolului (versiunea 5), durează doua RTT-uri (sau
+3, dacă se face și autentificare) până când datele pot circula între
+client și server.
 
 \begin{figure}[h]
 	\centering
@@ -10,7 +13,9 @@ Protocolul SOCKS este folosit pentru a crea conexiuni TCP către destinații arb
     	\label{fig:socks5op}
 \end{figure}
 
-In SOCKS 5 (versiunea curentă a protocolului, v. fig \ref{fig:socks5op}), clientul deschide o conexiune căte proxy si parcurge urmatoarele etape înainte să transmită date către server:
+In SOCKS 5 (versiunea curentă a protocolului, v. fig
+\ref{fig:socks5op}), clientul deschide o conexiune căte proxy si
+parcurge urmatoarele etape înainte să transmită date către server:
 \begin{itemize}
 	\item Negocierea metodei de autentificare (1 RTT): Clientul trimite un mesaj care conține metodele de autentificare suportate. Proxy-ul răspunde cu metoda de autentificare aleasă.
 	\item Autentificarea propriu-zisă (0-1 RTT-uri): Acest pas poate să lipsească, dacă nu se face autentificare. Altfel, durează tipic un RTT.
@@ -20,8 +25,10 @@ In SOCKS 5 (versiunea curentă a protocolului, v. fig \ref{fig:socks5op}), clien
 
 \subsection{SOCKS 6}
 
-Am dezvoltat versiunea 6 a protocolului SOCKS, pe care o propunem pentru standardizare în cadrul IETF. Momentan se află in starea de Internet Draft~\cite{socks6}.
-Principalele îmbunătățiri introduse în această versiune sunt:
+Am dezvoltat versiunea 6 a protocolului SOCKS, pe care o propunem
+pentru standardizare în cadrul IETF. Momentan se află in starea de
+Internet Draft~\cite{socks6}.  Principalele îmbunătățiri introduse în
+această versiune sunt:
 \begin{itemize}
 	\item Clientul are un comportament optimist și trimite cât mai multe informații către proxy, fără a aștepta să se termine autentificarea.
 	\item Semanticile cererilor imită semanticile TCP Fast Open~\cite{rfc7413}. În cerere, clientul poate include și potențialul payload pentru SYN-ul inițial trimis către server.
@@ -59,4 +66,8 @@ Dacă autentificarea s-a terminat cu succes, proxy-ul încearcă să creeze cone
 
 În cererile ulterioare, clientul poate să includă date de autentificare in cerere (Request), lucru care îl scutește de etapa de autentificare (fig. \ref{fig:socks6op1st}).
 Astfel, se poate obține un răspuns de la server intr-un singur RTT, cu 2-3 RTT-uri mai rapid decât cu SOCKS 5.
+
+
+Implementarea valabilă la momentul depunerii primului draft la IETF
+este disponibilă online la \cite{socks105}. 
 
