@@ -31,7 +31,7 @@ GOALS = $(PDFFILES)
 GOALS_PS = $(DVIFILES) $(TARGET).ps 
 
 PROJECTDIRECTORY = change-template
-ALLFILES = main.tex ./content.tex ./introduction.tex ./authors.tex ./executive-summary.tex ./frontpages.tex ./glossary.tex ./macros.tex ./changeGlobalDefs.tex chapters/intro.tex chapters/oro.tex chapters/upb.tex
+ALLFILES = main.tex ./content.tex ./introduction.tex ./authors.tex ./executive-summary.tex ./frontpages.tex ./glossary.tex ./macros.tex ./changeGlobalDefs.tex chapters/intro.tex chapters/oro.tex chapters/upb1.tex chapters/upb2.tex
 TEXFILES = main.tex ./content.tex ./introduction.tex ./authors.tex ./executive-summary.tex ./frontpages.tex ./glossary.tex ./macros.tex ./changeGlobalDefs.tex
 BIBFILES = ./references
 IMAGEFILES_EEPIC = 
