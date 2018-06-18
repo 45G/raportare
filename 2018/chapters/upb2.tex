@@ -2,19 +2,21 @@
 
 \section{Connectivity Monitor}
 
-A fost dezvoltată aplicațiaAndroid numită ConnectivityMonitor \footnote{https://github.com/45G/connectivitymonitor}, care are rolul principal de a face în mod automat configurații de rețea pentru a permite folosirea protocolului MPTCP. Pentru a face acest lucru, ea monitorizează constant interfețele de rețea WiFi și 4G și reconfigurează tabelele de rutare pentru MPTCP atunci când se modifică starea unei conexiuni.
+A fost dezvoltată aplicația Android numită ConnectivityMonitor \footnote{https://github.com/45G/connectivitymonitor}, care are rolul principal de a face în mod automat configurații de rețea pentru a facilita folosirea protocolului MPTCP. Pentru a face acest lucru, ea monitorizează constant interfețele de rețea WiFi și 4G și reconfigurează tabelele de rutare pentru MPTCP atunci când se modifică starea unei conexiuni.
 
-Pentru monitorizarea interfețelor de rețea, sunt ascultate evenimentele primite de la sistemul de operare Android, de conectare și deconectate pentru WiFi și 4G. În plus, sunt colectate periodic (o dată la 30 de secunde) următoarele valori ce caracterizează cele două interfețe.
+Pentru monitorizarea interfețelor de rețea, sunt ascultate evenimentele primite de la sistemul de operare Android, de conectare și deconectate la WiFi și 4G. În plus, sunt colectate periodic (o dată la 30 de secunde) o serie de parametri ce caracterizează cele două interfețe.
 
-Protocolul MPTCP poate fi activat și dezactivat din aplicație. Dacă MPTCP este activat, la conectarea pe o anumită interfață (WiFi sau 4G), se adaugă reguli speciale în tabela de rutare, pentru a permite folosirea acelei interfețe pentru a trimite trafic prin protocolul MPTCP. La deconectarea unei anumite interfețe se vor șterge acele reguli.
+Protocolul MPTCP poate fi activat și dezactivat din aplicație. Dacă MPTCP este activat, la conectarea pe o anumită interfață (WiFi sau 4G), se adaugă reguli speciale în tabela de rutare, pentru a permite folosirea acelei interfețe pentru trimiterea traficului prin protocolul MPTCP. La deconectarea unei anumite interfețe se vor șterge acele reguli.
 
-Datele colectate și evenimentele de monitorizare, împreună cu timestamp-ul asociat, sunt stocate în baza de date locală. Aceasta este salvată periodic (o dată pe săptămână) în cloud pentru procesarea ulterioară. Din aplicație se poate poate alege să se trimită baza de date în cloud într-un moment ales de ultilizator. 
+Pentru activarea MPTCP și configurarea tabelelor de rutare este nevoie de folosirea accesului root. De aceea aplicația trebuie să ruleze pe un telefon rootat și să primească acces root de la o aplicație  superuser (SuperSU).
 
-De asemenea, aplicația permite rularea scripturilor Python, Bash sau a executabilelor, pentru rularea experimentelor. Se pot specifica parametri personalizați pentru fiecare script/executabil în parte, și un număr de rulări.
+Datele colectate și evenimentele de monitorizare, împreună cu timestamp-ul asociat, sunt stocate în baza de date locală. Aceasta este salvată periodic (o dată pe săptămână) în cloud pentru procesarea ulterioară. Din aplicație se poate poate alege să se trimită baza de date în cloud într-un moment ales de ultilizator. Soluția de cloud aleasă este Firebase Cloud Storage datorită integrării facile cu aplicațiile Android.
+
+De asemenea, aplicația permite rularea scripturilor Python, Bash sau a executabilelor, pentru rularea experimentelor. Se pot specifica parametri personalizați pentru fiecare script/executabil în parte, și un număr de rulări. Se afișează rezultatele rulării și se salvează în baza de date.
 
 \section{Structura și utilitatea datelor colectate automat}
 
-Datele colectate periodic (la fiecare 30 de secunde) pentru fiecare interfață de rețea sunt: numărul de bytes trimiși și primiti, RSSI, RTT, MCS, frecvența, CID, TAC.  În plus este colectat periodic și nivelul bateriei. Evenimentele de conectare/deconectare sunt primite în timp real de la sistemul de operare atunci când se modifică starea interfeței.  Tabelul \ref{tab:date} include datele colectate pentru fiecare interfață. Toate datele colectate sunt stocate în baza de date împreună cu timestamp-ul aferent.
+Datele colectate periodic (la fiecare 30 de secunde) pentru fiecare interfață de rețea sunt: numărul de bytes trimiși și primiți, RSSI, RTT, MCS, frecvența, CID, TAC.  În plus este colectat periodic și nivelul bateriei. Evenimentele de conectare/deconectare la WiFi/4G sunt primite în timp real de la sistemul de operare atunci când se modifică starea interfeței.  Tabelul \ref{tab:date} include datele colectate pentru fiecare interfață. Toate datele colectate sunt stocate în baza de date împreună cu timestamp-ul aferent.
 
 \begin{table}[h!]
 \centering
@@ -48,8 +50,6 @@ LTE & Evenimente de conectare \\
 
 \subsection{Utilitare folosite pentru experimente}
 
-utilitarele pe care le folosim, descrise pe scurt (tcp\_ping, etc, doar ce e cazul)
-
 \subsubsection{RTT}
 
 A fost dezvoltat un script Python, \texttt{tcp\_ping.py}, care crează un socket pentru a se conecta la un server remote apoi trimite mesaje de dimensiune fixă. După fiecare mesaj trimis, așteaptă să primească același mesaj de la server și apoi afișează timestamp-ul și RTT-ul. 
@@ -64,18 +64,15 @@ Pe partea serverului, se folosește comanda \texttt{socat tcp-l:1888,fork exec:/
 
 Au fost folosite utilitarele curl, perf și wget pentru evaluarea throughput-ului. Tot cu acest scop, a fost dezvoltat scriptul Python \texttt{url.py}. Acesta crează un socket pentru a se conecta la serverul remote, apoi trimite un mesaj HTTP de tip GET pentru a obține un anumit fișier de pe server. Este folosit intervalul de timp între trimiterea cererii și primirea răspunsului complet, și numărul de bytes primiți pe WiFi și 4G, pentru a calcula throughput-ul pe cele două interfețe. 
 
-Numărul de bytes primiți este obținut din citirea fișierului \texttt{/sys/class/net/wlan0/statistics/rx\_bytes} pentru WiFi și a fișierului fișierului \texttt{/sys/class/net/rmnet0/statistics/rx\_bytes} pentru 4G.
+Numărul de bytes primiți este obținut din citirea fișierului \texttt{/sys/class/net/wlan0/statistics/rx\_bytes} pentru WiFi și a fișierului \texttt{/sys/class/net/rmnet0/statistics/rx\_bytes} pentru 4G.
 
 \chapter{Măsurători de handoff folosind terminalul instrumentat}
 
 \section{Arhitectura de test}
-cum ai pus mașinile
-
-care e scenariul de intrare, de ieșire
 
 Pentru a evidenția avantajele folosirii MPTCP, au fost realizate experimente pentru evaluarea handoff-ului între WiFi și 4G, atunci când MPTCP nu este activat.
 
-S-a folosit următoarea arhitectură de test \ref{fig:topologie}: 1) un access point (AP) configurabil ce rulează o Debian, 2) un telefon Samsung Galaxy S7 Edge ce rulează programul ConnectivityMonitor, 3) un RaspberryPi care rulează scripturile ce gestionează experimentele, și are acces atat la telefon, cât și la AP, pentru a putea trimite comenzi și primi date, 4) un server remote. În experimente ce vor fi descrise în continuare, se evaluează performanța traficului între telefon și server, în timp ce este modificată puterea AP-ului. 
+S-a folosit următoarea arhitectură de test \ref{fig:topologie}: 1) un access point (AP) configurabil ce rulează o distributie Debian, 2) un telefon Samsung Galaxy S7 Edge ce rulează programul ConnectivityMonitor, 3) un RaspberryPi care rulează scripturile ce gestionează experimentele, și are acces atât la telefon, cât și la AP, pentru a putea trimite comenzi și primi date, 4) un server remote. În experimentele ce vor fi descrise în continuare, se evaluează performanța traficului între telefon și server, în timp ce este modificată puterea AP-ului. 
 
 \begin{figure}[h!]
  	\includegraphics[scale=0.45]{figures/experiments/45G_Topology.pdf} 
@@ -85,20 +82,21 @@ S-a folosit următoarea arhitectură de test \ref{fig:topologie}: 1) un access p
 
 \subsection{Determinarea zonei gri}
 
-În primul rând s-a realizat un experiment pentru determinarea zonei gri. Zona gri este definită de acele puteri ale AP-ului pentru care performanța este scăzută dar WiFi-ul rămâne conectat. S-a simulat ieșirea din raza de acoperire a AP-ului prin scaderea puterilor acestuia, de la cea mai mare la cea mai mică. 
+În scenariul considerat, un utilizator cu un telefon pornește de lângă AP-ul WiFi și se îndepărtează până când telefonul se deconectează de la WiFi. S-a simulat ieșirea din raza de acoperire a AP-ului prin scăderea puterilor acestuia, de la cea mai mare la cea mai mică. 
+
+S-a realizat un experiment pentru determinarea zonei gri. Zona gri este definită de acele puteri ale AP-ului pentru care performanța este scăzută dar WiFi-ul rămâne conectat. 
 
 Pentru evaluarea performanței s-a folosit scriptul \texttt{tcp\_ping} cu opțiunea \texttt{-datartt}, care înregistrează RTT-ul între telefon și serverul remote. 
 
-Experimentul a fost executat prin implementarea și rularea unui script Python ce rulează pe RaspberryPi, care interacționează cu telefonul prin ADB și cu AP-ul prin SSH. Pașii realizați sunt următorii:
+Experimentul a fost executat prin implementarea unui script Python ce rulează pe RaspberryPi, care interacționează cu telefonul prin ADB și cu AP-ul prin SSH. Pașii realizați sunt următorii:
 \begin{enumerate}
 	\item Se setează puterea maximă, 17,  a AP-ului
 	\item Se așteaptă evenimentul de conectare la WiFi pe telefon
 	\item Se crează un thread care pornește scriptul \texttt{tcp\_ping} pe telefon, până se primește ultimul răspuns de la server și conexiunea cu serverul se închide
-	\item La fiecare 20 de secunde se scade cu o unitate puterea AP-ului până ajunge la 1.
+	\item La fiecare 20 de secunde se scade cu o unitate puterea AP-ului până ajunge la 1
 	\item Se realizează statistici legate de RTT pentru fiecare interval de 20 secunde
-	\item Se memorează puterea la care s-a închis conexiunea cu serverul 
+	\item Se memorează puterea AP-ului din momentul în care s-a închis conexiunea cu serverul 
 \end{enumerate}
-
 
 \subsection{Determinarea timpului mort și a timpului de start}
 
@@ -150,8 +148,6 @@ Acest experiment urmărește evaluarea handoff-ului în cazul folosirii MPTCP. A
 	\item La fiecare 20 de secunde se scade cu o unitate puterea AP-ului până ajunge la 1.
 	\item Se realizează statistici legate de RTT pentru fiecare interval de 20 secunde
 \end{enumerate}
-
-
 
 \section{Rezultate măsurători}
 
