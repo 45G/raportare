@@ -259,6 +259,50 @@ $\begin{array}{rl}
 
 Valorile ridicate ale timpului mort în ambele configurații, demonstrează faptul că fără MPTCP, telefonul își va pierde conexiunile existente atunci când se îndepărtează de AP (când puterea AP-ului scade), și va rămâne o perioadă fără conexiune funcțională la Internet, chiar dacă rețeaua 4G era disponibilă. 
 
+\subsubsection{Alte rezultate}
+
+Pentru cele 6 experimente (cu câte 1000 de rulări fiecare), timpul maxim de așteptare a evenimentelor de conectare și deconectare de la WiFi a fost setat la 15 minute. Depășirea acestui timp la conectare/deconectare pe WiFi duce la restarea experimentului deoarece ar afecta prea mult experiența utilizatorului.
+
+Tabelul \ref{tab:timeout} include pentru fiecare experiment numărul de resetări datorate timeout-ului la conectare, la deconectare și numărul total de resetări. Observăm ca numărul total de resetări în cazul experimentelor 4,5,6 este ușor mai scăzut decât în cazul experimentelor 1,2,3. Înafară de acest lucru, nu se poate observa o diferență notabilă între cele două configurații.
+
+\begin{table}[h!]
+\centering
+\caption{Timeout la conectare/deconectare WiFi}
+\label{tab:timeout}
+\begin{tabular}{c | c | p{3cm} | p{3cm} | p{2cm}}
+\hline
+Experiment & Aggresive handover& Resetări datorate timeout-ului la conectare & Resetări datorate timeout-ului la deconectare  & Număr total de resetări \\
+\hline
+1 & dezactivat & 45 & 6 & 51 \\
+2 & dezactivat & 25 & 22 & 47 \\
+3 & dezactivat & 28 & 25 & 53 \\
+4 & activat  & 35 & 2 & 37 \\
+5 & activat & 28 & 12& 40 \\
+6 & activat & 17 & 25 & 42 \\
+\hline
+\end{tabular}
+\end{table}
+
+Alt rezultat extras din cele 6 experimente este puterea la care a fost primit ultimul răspuns din partea serverului. Tabelul \ref{tab:putere} include pentru fiecare experiment numărul de iterații asociate cu fiecare putere a AP-ului (la care s-a primit ultimul răspuns de la server).
+
+\begin{table}[h!]
+\centering
+\caption{Puterea AP-ului asociată ultimului răspuns de la server}
+\label{tab:putere}
+\begin{tabular}{c | c | c | c | c | c | c}
+\hline
+Experiment & Aggresive handover& Puterea 5 & Puterea 4 & Puterea 3 & Puterea 2 & Puterea 1 \\
+\hline
+1 & dezactivat & 747 & 154 & 11 & 7 & 29 \\
+2 & dezactivat & 50 & 867 & 11 & 2 & 45 \\
+3 & dezactivat & 368 & 492 & 24 & 11 & 72 \\
+4 & activat  & 813 & 65 & 8 & 8 & 59 \\
+5 & activat  & 810 & 74 & 16 & 9 & 62 \\
+6 & activat  & 525 & 362 & 16 & 7 & 73 \\
+\hline
+\end{tabular}
+\end{table}
+
 \subsection{Handoff-ul în cazul folosirii MPTCP}
 
 În urma acestui experiment s-a observat faptul că conexiunea cu serverul este continuă, nu se închide atunci când puterea AP-ului scade, deoarece traficul este preluat de către al doilea flow, cel care folosește conexiunea 4G. Acest lucru este realizat înainte de a se ajunge la RTT-uri foarte mari (puteri mici ale AP-ului). Prin urmare, performanța este menținută chiar dacă se iese din raza de acoperire a AP-ului.
