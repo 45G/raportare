@@ -1,16 +1,154 @@
-\chapter{Arhitectura SOCKS6}
+\chapter{Arhitectura SOCKS v6}
 \label{sec:arch_upb}
 
-se reia cadrul general cu desenele pentru SOCKSv6
+% se reia cadrul general cu desenele pentru SOCKSv6
 
-\chapter{Caracteristici SOCKS6}
-spunem despre ce-și doresc mobilele, MPTCP-ul, și securitatea.
-în principiu, ce s-a adăugat în draft-01 șî draft-02
+Operatorii de telefonie mobila instaleaza MPTCP \cite{Raiciu_Hard:2012} pe telefoane mobile 
+pentru a exploata latimea de banda oferita de LTE si WiFi in acelasi timp. Deoarece foarte putine
+servere folosesc MPTCP, este necesar un proxy in incinta operatorului, care sa termine conmexiunea
+MPTCP si sa comunice cu serverul folosind TCP normal.
+
+%TODO
+
+\chapter{Caracteristici SOCKS v6}
+% spunem despre ce-și doresc mobilele, MPTCP-ul, și securitatea.
+% în principiu, ce s-a adăugat în draft-01 șî draft-02
 \label{sec:arch_upb}
 
+Versiunile 4 si 5 \cite{rfc1928} ale protocolului SOCKS au fost dezvoltate si standardizate acum
+doua decenii si sunt larg folosite in ziua de azi pentru diverse scopuri.
+Eel sunt implementate in multe aplicatii, precum browsere web, clienti SSH si proxificator.
+
+Este foarte important ca un proxy sa ofere performanta buna si sa profite de cele mai recente
+imbunatatiri aduse protocoalelor de retea. Pentru a profita de de TCP Fast Open \cite{rfc7413}
+sau pentru oferi securitate mai buna impotriva potentialilor atacatori, Korea Telecom si alti utilizatori
+au recurs la proxy-uri precum Shadowsocks \cite{shadowsocks}, care folosesc protocoale nestandardizate
+si a caror securitate nu au fost auditata.
+
+Acest capitol descrie protocolul SOCKS versiunea 6, care acum este in curs de dezvoltate la IETF \cite{olteanu-intarea-socks-6-02}.
+Principala imbunatatire adusa protocolului este eliminarea round-trip-urilor de date dintre client si proxy in cele mai multe cazuri.
+SOCKS versiunea 6 rezolva problemele principale ale forlosirii atat TFO, cat si a 0-RTT TLS Session Resumption \cite{tls1.3},
+oferind un mecanism care asigura idempotenta cererilor.
+
+SSOCKS v6 este de asemenea extensibil, permitand implementarea unor functionaltiati noi, fara a introduce probleme de compatibilitate.
 
 \section{RTT redus}
-tabela 
+
+
+\begin{figure*}[t]
+	\centering
+	\includegraphics*[angle=0,height=.30\textwidth]{figures/socks/a-crop}
+	\label{fig:socksv5}
+	\caption{SOCKS v5}
+\end{figure*}
+
+\begin{figure*}[t]
+	\centering
+	\includegraphics*[angle=0,height=.30\textwidth]{figures/socks/b-crop}
+	\label{fig:socksv6short}
+	\caption{SOCKS v6}
+\end{figure*}
+
+\begin{figure*}[t]
+	\centering
+	\includegraphics*[angle=0,height=.30\textwidth]{figures/socks/c-crop}
+	\label{fig:yes_yes_no}
+	\caption{SOCKS v6 cu TFO disponibil numai intre client si proxy}
+\end{figure*}
+
+Atunci cand un client doreste se se conecteze prin proxy la un server, trebuie sa deschida o conexiune TCP
+catre un proxy SOCKS v6. Diferenta principala fata de versiunea 5 este ca se transmit cat mai multe informatii
+inca din primul mesaj. Primul mesaj trimis de client se numeste un SOCKS Request si  contine adresa si
+portul serverului, alaturi de o transa initiala de date pentru server (de exemplu, un HTTP GET).
+Daca clientul si proxy-ul au comunicat in prealabil, este posibila autentificarea in 0 RTT-uri, caz in care
+datele de autentificare sunt si ele incluse in cerere.
+
+Apoi, proxy-ul trimite un Authentication Reply. Daca in Request nu se aflau date de autentificare satisfacatoare,
+proxy-ul indica metoda de autentificare ce trebuie sa urmeze. Acest mesaj este urmat de protocolul de autentificare 
+specific metodei.
+
+In final, proxy-ul se conecteaza la server si genereaza un Operation Reply, prin indica succesul sau esecul conexiunii.
+Datele primite ulterior de proxy sunt trimite verbatim catre client sau server.
+
+In cazul cel mai uzual, in care autentificarea este bine pusa la punct (v. fig. \ref{fig:socksv6short}), proxy-ul
+incearca sa se conecteze la server imediat ce promeste Request-ul, neadaugand latenta in plus.
+
+Presupunand ca proxy-ul se afla pe calea dintre client si server, timpul necesar pentru a obtine un raspuns de la server
+(de ex. un HTTP OK) prin intermediul SOCKS v6 nu este mai lung decat timpul obtinerii unui raspuns atunci cand serverul
+este contactat direct.
+
+\begin{table}
+	\centering
+	\begin{tabular}{| l | c | c | c | r |} \hline
+		& TFO la proxy & TFO la server & RTT total \\ \hline
+	% 	SOCKSv5 & \multicolumn{3}{|l|}{~}  & ? 3T + 3t ? \\ \hline
+		\multirow{2}{*}{TCP} & - & Nu  & \(2P+2S\) \\ \hhline{~----}
+		~ & - & Da  & \(P+S\) \\ \hline
+		\multirow{3}{*}{SOCKSv6} & Nu & Nu  & \(2P + 2S\)  \\ \hhline{~----}
+		~ & Da & Nu & \(P + 2S\) \\ \hhline{~----}
+		~ & Da  & Da & \(P + S\) \\ \hline
+	\end{tabular}
+  	\caption{Timpul necesar primirii unui raspuns de date. (P = RTT client-proxy, S = RTT client-server.)}
+ \end{table}
+
+SOCKS v6 este mai rapid decat TCP atunci cand serverul nu are TFO activat.
+Clientii pot folosi TFO pe traseul dintre proxy si server, eliminand un RTT dintre client si proxy.
+Acest lucru este foarte avantajos pentru dispozitivele mobile, intrucat latenta dintre dispozitiv si base station
+poate fi foarte mare.
+
+In plus, daca rulam SOCKS v6 peste TLS, timpii obtinuti nu se schimba atata timp cat folosim 0-RTT Session Resumption.
+
+Spre diferenta de versiunea 6, in versiunea 5 sunt necesare 2 RTT-uri (sau 3, daca e necesara autentificarea clientilor)
+pana cand datele incep sa curga intre client si server.
+
 \section{Operațiuni idempotente cu TLS 1.3}
+
+% Both TCP Fast Open and 0-RTT TLS Session Resumption have well-known issues that could lead to replays.
+% Under rare circumstances, a resent TFO SYN could lead to the establishment of a duplicate connection
+% at the server. This can be disastrous if, for example, the server is handling financial transactions
+% and erroneously performs a transaction twice.
+% As for TLS, the initial chunk of data sent out by the client during 0-RTT Session Resumption can be replayed
+% % across multiple connections
+% by an on-path attacker, or even unwittingly by the client itself, if it is using TFO.
+% 
+% In order to safely use TFO and 0-RTT Session Resumption on the client-proxy leg, 
+% % Using SOCKS v6 in conjunction with either of them transfers the risks to the application-layer protocol
+% % that is being proxied.
+% % Some protocols can not tolerate these risks. In order to
+% % still enjoy the benefits of either or both of said features,
+% we have implemented a mechanism whereby SOCKS
+% requests can be made idempotent\footnote{TFO is used on the proxy-server leg only if the client explicitly requests it.}.
+% The proxy will honor an individual
+% request at most once, regardless of how many times it has been replayed.
+% 
+% To protect against duplicate SOCKS requests, authenticated clients can request, and then spend, idempotence \emph{tokens}. A token can only be spent on a single SOCKS request.
+% 
+% Tokens are 4-byte unsigned integers in a modular 4-byte space. Therefore, if \(x\) and \(y\) are tokens, \(x\) is less than \(y\) if \( 0 < (y - x) < 2^{31} \) in unsigned 32-bit arithmetic.
+% 
+% Proxies grant contiguous ranges of tokens called \emph{token windows}. Token windows are defined by their base (the first token in the range) and size.
+% Windows are shifted (i. e. have their base increased, while retaining their size) by the proxy.
+% 
+% Well-behaved clients attempt to spend their tokens in order. This, however, does not guarantee that the requests will be received or processed in order by the proxy.
+% Requests can also be dropped by the network.
+% 
+% The proxy tracks the status of the tokens in the window, always shifting it past spent tokens.
+% To prevent low-order unspent tokens from stalling the window's advancement, they can be forfeited subject to a parameter called the \emph{high water mark}.
+% % The forfeiture of unspent tokens is driven by a parameter called the high water mark (which is strictly smaller than the window size).
+% If the highest spent token exceeds the high water mark, the window is shifted.
+% Increasing this parameter makes the proxy more tolerant to request reordering.
+% 
+% Our chosen solution has the following properties:
+% \emph{a) Light weight}: The memory usage is constant,
+% the proxy performs only one memory allocation per client, and all operations are cheap.
+% This mechanism does not open up an avenue for DoS by itself.
+% \emph{b) Resilient to proxy crashes}: Restarting the proxy would ultimately result in a new token window being allocated.
+% Since the new window is very unlikely to overlap with the old one, the odds of honoring an old request are very low.
+% \emph{c) Resilient across time}: To successfully replay a request, an attacker would have to wait until the window
+% shifts back to the same position (i. e until the client makes 4 billion requests).
+% \emph{d) Timely}: Token window advertisements are sent immediately after receiving the request, as part of the authentication reply.
+% \emph{e) Unrestrictive}: The only restriction placed on the client is that it can make a limited number of requests per client-proxy RTT,
+% which is not an issue if the window size is large enough.
+% Token expenditure requests and window advertisements can be received out-of order.
+
 \section{Opțiuni de configurare a sockeților pe proxy}
 
