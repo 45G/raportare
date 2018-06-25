@@ -8,7 +8,14 @@ pentru a exploata latimea de banda oferita de LTE si WiFi in acelasi timp. Deoar
 servere folosesc MPTCP, este necesar un proxy in incinta operatorului, care sa termine conmexiunea
 MPTCP si sa comunice cu serverul folosind TCP normal.
 
-%TODO
+\begin{figure*}[t]
+	\centering
+	\includegraphics*[angle=0,width=\textwidth]{figures/socks/arch}
+	\label{fig:arch}
+	\caption{Arhitectura SOCKS v6}
+\end{figure*}
+
+
 
 \chapter{Caracteristici SOCKS v6}
 % spunem despre ce-și doresc mobilele, MPTCP-ul, și securitatea.
@@ -17,7 +24,7 @@ MPTCP si sa comunice cu serverul folosind TCP normal.
 
 Versiunile 4 si 5 \cite{rfc1928} ale protocolului SOCKS au fost dezvoltate si standardizate acum
 doua decenii si sunt larg folosite in ziua de azi pentru diverse scopuri.
-Eel sunt implementate in multe aplicatii, precum browsere web, clienti SSH si proxificator.
+Ele sunt implementate in multe aplicatii, precum browsere web, clienti SSH si proxificatoare.
 
 Este foarte important ca un proxy sa ofere performanta buna si sa profite de cele mai recente
 imbunatatiri aduse protocoalelor de retea. Pentru a profita de de TCP Fast Open \cite{rfc7413}
@@ -25,7 +32,7 @@ sau pentru oferi securitate mai buna impotriva potentialilor atacatori, Korea Te
 au recurs la proxy-uri precum Shadowsocks \cite{shadowsocks}, care folosesc protocoale nestandardizate
 si a caror securitate nu au fost auditata.
 
-Acest capitol descrie protocolul SOCKS versiunea 6, care acum este in curs de dezvoltate la IETF \cite{olteanu-intarea-socks-6-02}.
+Acest capitol descrie versiunea 6 a protocolului SOCKS, care acum este in curs de dezvoltate la IETF \cite{olteanu-intarea-socks-6-02}.
 Principala imbunatatire adusa protocolului este eliminarea round-trip-urilor de date dintre client si proxy in cele mai multe cazuri.
 SOCKS versiunea 6 rezolva problemele principale ale forlosirii atat TFO, cat si a 0-RTT TLS Session Resumption \cite{tls1.3},
 oferind un mecanism care asigura idempotenta cererilor.
@@ -56,19 +63,19 @@ SSOCKS v6 este de asemenea extensibil, permitand implementarea unor functionalti
 	\caption{SOCKS v6 cu TFO disponibil numai intre client si proxy}
 \end{figure*}
 
-Atunci cand un client doreste se se conecteze prin proxy la un server, trebuie sa deschida o conexiune TCP
+Atunci cand un client doreste se se conecteze la un server, trebuie sa deschida o conexiune TCP
 catre un proxy SOCKS v6. Diferenta principala fata de versiunea 5 este ca se transmit cat mai multe informatii
-inca din primul mesaj. Primul mesaj trimis de client se numeste un SOCKS Request si  contine adresa si
+inca din primul mesaj. Clientul incepe prin a trimite un SOCKS Request, care  contine adresa si
 portul serverului, alaturi de o transa initiala de date pentru server (de exemplu, un HTTP GET).
 Daca clientul si proxy-ul au comunicat in prealabil, este posibila autentificarea in 0 RTT-uri, caz in care
 datele de autentificare sunt si ele incluse in cerere.
 
 Apoi, proxy-ul trimite un Authentication Reply. Daca in Request nu se aflau date de autentificare satisfacatoare,
-proxy-ul indica metoda de autentificare ce trebuie sa urmeze. Acest mesaj este urmat de protocolul de autentificare 
-specific metodei.
+proxy-ul indica metoda de autentificare ce trebuie sa urmeze. In acest caz, urmeaza o secventa mai lunga de mesaje prin
+care clientul se autentifica.
 
 In final, proxy-ul se conecteaza la server si genereaza un Operation Reply, prin indica succesul sau esecul conexiunii.
-Datele primite ulterior de proxy sunt trimite verbatim catre client sau server.
+Datele primite ulterior de proxy sunt trimite verbatim catre capatul celalalt.
 
 In cazul cel mai uzual, in care autentificarea este bine pusa la punct (v. fig. \ref{fig:socksv6short}), proxy-ul
 incearca sa se conecteze la server imediat ce promeste Request-ul, neadaugand latenta in plus.
@@ -91,7 +98,7 @@ este contactat direct.
   	\caption{Timpul necesar primirii unui raspuns de date. (P = RTT client-proxy, S = RTT proxy-server. P + S = RTT client-server.)}
  \end{table}
 
-SOCKS v6 este mai rapid decat TCP atunci cand serverul nu are TFO activat.
+SOCKS v6 este \emph{mai rapid} decat TCP atunci cand serverul nu are TFO activat.
 Clientii pot folosi TFO pe traseul dintre proxy si server, eliminand un RTT dintre client si proxy.
 Acest lucru este foarte avantajos pentru dispozitivele mobile, intrucat latenta dintre dispozitiv si base station
 poate fi foarte mare.
@@ -111,7 +118,7 @@ Acest lucru poate fi dezastruos daca, de exemplu, serverul se ocupa de tranzacti
 
 In TLS 1.3, un client care deschide o conexiune noua si doreste sa-si continue sesiunea de TLS poate sa includa niste date (de ex. un HTTP GET)
 in primul mesaj trimis catre server. Aceste date initiale (numite "Early Data") beneficiaza de securitate mai scazuta.
-Daca intre cele doua capete se afla un atacator, acesta poate sa captureze datele initiale (criptate) si sa creeze conexiuni duplicate.
+Daca intre cele doua capete se afla un atacator, acesta poate sa captureze datele initiale (in forma criptata) si sa le foloseasca pentru a creea conexiuni duplicate.
 
 Pentru a folosi in deplina siguranta TFO si 0-RTT Session Resumption intre client si proxy, am implementat un mecanism
 prin care se asigura idempotenta cererilor SOCKS. Proxy-ul va onora o cerere individuala cel mult o data, indiferent de cate
@@ -133,7 +140,7 @@ mare decat high water mark, fereastra este mutata si token-ul necheltuit este pi
 
 Mecanismul de idempotenta are urmatoarele proprietati:
 \begin{itemize}
-    \item \emph{Consum mic de resurse}: Consumul de memorie pe client este fix, nu se fac realocari de memorie si toate oreratiunile sunt ieftine.
+    \item \emph{Consum mic de resurse}: Proxy-ul aloca o cantitate fixa de memorie pentru fiecare cliemt. Nu se fac realocari de memorie si toate operatiunile sunt ieftine.
     Mecanismul de idempotenta in sine nu ofera o posibilitate de denial of service.
     \item \emph{Tolerant la crash-uri}: Repornirea proxy-ului va duce la alocarea unei alte ferestre. Din moment ce este foarte improbabil ca
     fereastra noua sa se intersecteze cu chea veche, sansele de a onora o cerere veche sunt foarte mici.
@@ -142,20 +149,6 @@ Mecanismul de idempotenta are urmatoarele proprietati:
     \item {Nerestrictiv}: Singura restrictie impusa clientului esre ca poate face un numar limitat de cereri intr-un RTT. Acest lucru nu e o problema daca ferestrele sunt suficient de mari.
 \end{itemize}
 
-
-% 
-% Our chosen solution has the following properties:
-% \emph{a) Light weight}: The memory usage is constant,
-% the proxy performs only one memory allocation per client, and all operations are cheap.
-% This mechanism does not open up an avenue for DoS by itself.
-% \emph{b) Resilient to proxy crashes}: Restarting the proxy would ultimately result in a new token window being allocated.
-% Since the new window is very unlikely to overlap with the old one, the odds of honoring an old request are very low.
-% \emph{c) Resilient across time}: To successfully replay a request, an attacker would have to wait until the window
-% shifts back to the same position (i. e until the client makes 4 billion requests).
-% \emph{d) Timely}: Token window advertisements are sent immediately after receiving the request, as part of the authentication reply.
-% \emph{e) Unrestrictive}: The only restriction placed on the client is that it can make a limited number of requests per client-proxy RTT,
-% which is not an issue if the window size is large enough.
-% Token expenditure requests and window advertisements can be received out-of order.
 
 \section{Opțiuni de configurare a sockeților pe proxy}
 
