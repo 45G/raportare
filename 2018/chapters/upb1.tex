@@ -152,3 +152,25 @@ Mecanismul de idempotenta are urmatoarele proprietati:
 
 \section{Opțiuni de configurare a sockeților pe proxy}
 
+Protocolul SOCKS6 dispune de optiuni pentru configurarea socketilor deschisi de proxy.
+Pentru o operatiune tipica, un proxy deschide doi socketi: unul pentru a vorbi cu clientul si unul pentru a vorbi cu serverul.
+
+Optiunile de configurare a socketilor au fost modelate pentru a mima semantica functiilor |getsockopt()| si |setsockopt()| si au urmatoarele campuri:
+
+\begin{itemize}
+	\item Tronson: client-proxy sau proxy-server.
+	\item Nivel: IP generic, IPv4, IPv6, TCP, UDP sau TLS.
+	\item Cod: un cod specific operatiunii cerute.
+	\item Date: date specifice operatiunii.
+\end{itemize}
+
+Clientii pot pune astfel de optiuni intr-un Request pentru a cere un anumit comportament din partea proxy-ului.
+De asemenea, proxy-ul poate include astfel de optiuni intr-un Operation Reply pentru a semnaliza comportamentul socketilor sai.
+
+In versiunea curenta a protocolului exista urmatoarele optiuni:
+\begin{itemize}
+	\item TFO: Clientul poate indica daca doreste ca proxy-ul sa contacteze serverul folosind TFO.
+	\item MPTCP: Proxy-ul poate instiinta clientul daca serverul foloseste MPTCP. Astfel, un client mobil poate sa evite folosirea proxy-ului atunci cand contacteaza serverul din nou.
+	\item Scheduler MPTCP: Felul in care MPTCP distribuie datele in subflow-uri depinde de un scheduler. In cazul in care un client are o conexiune cu volum mic de date, dar latenta este foarte importanta, poate instrui proxy-ul sa duplice datele pe toate subflow-urile.
+\end{itemize}
+
