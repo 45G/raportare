@@ -1,0 +1,31 @@
+\chapter{Obiective}
+\label{sec:objectives}
+
+
+
+\begin{itemize}
+\item Implementarea modificărilor necesare pe telefoane: modificarea
+kernel-ului și actualizări la Android pentru a folosi
+MPTCP. Sistemul Android se bazează pe Linux, dar există suficiente
+diferențe și părți specifice dispozitivului pentru a face un port
+compatibil cu toate aplicațiile non-trivial.
+
+\item Implementare și plasare proxy în rețeua Orange România
+SGiLAN. Proxy-ul poate fi explicit sau transparent, fiecare soluție necesită
+o implementare diferită pe telefon și la proxy.
+
+
+\item Executare măsurători de performanță pentru diferite scenarii
+  pentru a optimiza: conectivitatea, capacitatea, experiența cât mai
+  fluidă a utilizatorului. Deoarece actualizarea MPTCP este invazivă
+  pentru stiva TCP/IP, nu trebuie să existe nicio regresie a
+  funcționalității sau performanțelor atunci când serviciul este
+  implementat într-o rețea de testare cu o utilizatori reali.
+
+
+\item Realizarea unui prototip pentru testarea la scară mai largă,
+  folosind echipe de testare ale operatorului sau grupuri de
+  utilizatori specializați.
+
+
+\end{itemize}

@@ -1,0 +1,18 @@
+\chapter{Arhitectura SOCKS6}
+\label{sec:arch_upb}
+
+se reia cadrul general cu desenele pentru SOCKSv6
+
+referire la draft 00, 01, și 02.
+
+\chapter{Caracteristici SOCKS6}
+spunem despre ce-și doresc mobilele, MPTCP-ul, și securitatea.
+în principiu, ce s-a adăugat în draft-01 șî draft-02
+\label{sec:arch_upb}
+
+
+\section{RTT redus}
+tabela 
+\section{Operațiuni idempotente cu TLS 1.3}
+\section{Opțiuni de configurare a sockeților pe proxy}
+

@@ -1,0 +1,22 @@
+\chapter{Arhitecturi de conectare  MPTCP prin proxy}
+\label{sec:arch_upb}
+
+MPTCP RFC\cite{rfc6824bis}, \cite{mptcp-nsdi} este un upgrade la TCP
+care permite conectarea simultană prin interfețe multiple, fără a
+recompila aplicațiile. O aplicație folosește în continuare API-ul de
+BSD sockets, dar beneficiază de conexiunile multiple disponibile în
+telefoanele de astăzi: WiFi, 4G, si Bluettoth. Pentru a beneficia de
+funcționalitatea MPTCP, atât serverul cât si clientul trebuie
+modificate. Deoarece multe servere nu implementează încă MPTCP,
+soluția temporara este de a ruta tot traficul MPTCP printr-un proxy
+care continuă conexiunea cu TCP clasic până la serverele legacy.
+
+
+\section{Protocoale din familia SOCKS}
+
+\input{chapters/socks.tex}
+
+\chapter{Folosirea MPTCP în sistemul de operare Android}
+\label{sec:mptcp_android}
+\input{chapters/mptcp_android.tex}
+

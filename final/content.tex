@@ -1,0 +1,116 @@
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+% Occasionally you may find that another package defines \cleardoublepage when it
+% is not required. This may cause an unwanted blank page to appear before each
+% glossary. This can be fixed by redefining \glsclearpage:
+% http://theoval.cmp.uea.ac.uk/~nlct/latex/packages/glossaries/glossaries-manual.html
+\renewcommand*{\glsclearpage}{\clearpage}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% print the glossary  %
+%%%%%%%%%%%%%%%%%%%%%%%
+%\printglossary[title= Definitions,
+%               toctitle=Definitions,
+%               style=list,
+%               ]
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% print the acronyms  %
+%%%%%%%%%%%%%%%%%%%%%%%
+%\printglossary[type=\acronymtype,
+%               title=Acronyms,
+%               toctitle=Acronyms,
+%               style=list
+%               ]
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%n
+% % print the symbols  %
+% %%%%%%%%%%%%%%%%%%%%%%%
+% \printglossary[type=symbols,
+%                title=Symbols,
+%                toctitle=Symbols,
+%                style=list
+%                ]
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% WORK STARTS HERE ......................................
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{chapters/intro}
+\input{chapters/objectives1}
+\input{chapters/objectives2}
+\input{chapters/oro}
+\input{chapters/upb0}
+\input{chapters/upb1}
+\input{chapters/upb2}
+
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+%% INTRODUCERE - CHAPTER 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+
+% \input{arch-basics}
+
+%\input{faza}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+%% ARHITECTURA - CHAPTER 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+%\input{arhitectura}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+%% COMPONENTE - CHAPTER 3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+
+% \chapter*{SECTIUNEA I: Stabilirea Cerintelor si Modelului Arhitectural}
+% 
+% \addcontentsline{toc}{chapter}{SECTIUNEA I: Stabilirea Cerintelor si Modelului Arhitectural}
+% 
+% \input{middlebox_study}
+% 
+% \input{componente}
+% 
+% 
+% \chapter*{SECTIUNEA II: Proiectarea Platformei si Protocoalelor}
+% \addcontentsline{toc}{chapter}{SECTIUNEA II: Proiectarea Platformei si Protocoalelor}
+% \input{platforma}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+%% Aplicatii - CHAPTER 5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+% \input{aplicatii}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+%% Concluzii - CHAPTER 6
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+% \chapter{Concluzii}
+% \input{concluzii}
+% 
+% \chapter*{SECTIUNEA III: Stabilirea Planului de Diseminare}
+% \input{dissemination}
+% 
+% \addcontentsline{toc}{chapter}{SECTIUNEA III: Stabilirea Planului de Diseminare}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+%% BIBLIOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-
+\addcontentsline{toc}{chapter}{Bibliografie}
+\renewcommand{\bibname}{Bibliografie}
+
+\addcontentsline{toc}{chapter}{References}
+%\bibliographystyle{ieeetr}
+\bibliographystyle{plain}
+%\bibliographystyle{abbrv}
+%\bibliographystyle{phjcp}
+%%\bibliographystyle{apalike}
+\bibliography{references}
+% \bibliography{chapters/symnet/biblio}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% content.tex ends here

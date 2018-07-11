@@ -1,0 +1,74 @@
+
+\chapter{Introducere}
+
+Atunci cand a fost creata, arhitectura Internet-ului a fost bazata pe
+principiul end-to-end, prin care se limiteza rolul retelei la a
+transmite pachete, iar orice prelucrare la nivel superior in stiva de
+protocoale este executata de sistemele de la capetele
+conexiunilor. Acest model are marea virtute de a permite noi
+aplicatii, necesitand numai modificarea calculatoarelor de la capete,
+nu si a retelei.
+
+Se poate argumenta ca internetul nu face nimic extraordinar de bine,
+dar face aproape totul destul de bine, si aceasta este ceea ce
+conteaza. Din pacate, realitatea nu este tocmai asa: Internet-ul nu
+face totul suficient de bine.  Versiunea initiala a arhitecturii
+Internet a incetat sa descrie Internet-ul in practica de aproximativ
+cincisprezece ani.  NAT-urile si firewall-urile au fost primele
+dispozitive folosite in practica, in retea, care proceseaza pachetele
+la nivel 4 (sau mai sus).  Mai recent, a devenit o practica larg
+raspandita folosirea inpectiei profunde a pachetelor (deep packet
+inspection, sau DPI) pentru a analiza traficul si a limita largimea de
+banda pentru traficul ``mai putin important''.  Proxy-uri transparente
+web si acceleratoare de aplicatii sunt montate in retea pentru a
+imbunatati performanta, sisteme de detectare a intruziunilor
+reasambleaza fluxurile pentru a monitoriza traficul, iar
+normalizatoarele de trafic elimina cazuri ambigue care ar putea
+reprezenta amenintari pentru sistemele de securitate. Numim toate
+aceste dispozitive de retea care proceseaza traficul la nivel 4 sau
+mai sus ``middleboxes''.
+
+Aceasta serie de imbunatatiri ad-hoc ale arhitecturii initiale aduce
+doua probleme-cheie. In primul rand, ele incorporeaza limitele
+actualelor protocoale si aplicatii in cadrul retelei, facand
+functionalitatile noi foarte greu de implementat.  In al doilea rand,
+ele fac dificila sarcina de a intelege ce se va intampla cu un pachet
+trimis: iar aceasta face Internet-ul fragil si greu de depanat.
+
+Am realizat recent un studiu care arata ca middleboxurile sunt
+predominante astazi (detalii puteti gasi in \cite{imc}). Am testat 142
+retele de acces in 24 de tari. 33\% din caile testate contin un
+middlebox care pastreaza stare despre fluxuri in retea si
+implementeaza functionalitate de nivel 4+ in retea. Aceste cifre nu se
+iau in considerare si middlebox-urile care implementeaza NAT si
+firewalls; acestea sunt omniprezente. De asemenea, nu poate observa
+dispozitive de procesare in retea la servere, cum ar fi cele care
+balanseaza traficul catre serverele dintru centru de date (data
+center).
+
+Observatie este ca Internetul originar, transparent end-to-end, a
+evoluat intr-o retea in care o cale end-to-end este compusa din mai
+multe segmente de retea IP interconectate de puncte care proceseaza
+trafic la nivel 4 sau mai sus.  Pare inutil sa incercam de a combate
+aceasta tendinta: pur si simplu, exista prea multe motive pentru care
+operatorii aleg sa implementeze aceste middleboxes. Singura strategie
+rezonabila este de a imbratisa middleboxes, propunand insa o
+arhitectura care sa le includa, o arhitectura care pe de o parte sa
+permita clientilor Internet sa inteleaga functionalitatea pe care ele
+o ofera, si care permit deasemenea clientilor sa instantieze
+functionalitate noua in retea.
+
+Daca ne-am limita la a face middlebox-urile vizibile, castigurile ar
+fi limitate. Ceea ce dorim sa facem cu adevarat este sa construim o
+retea in care aplicatii noi pot folosi de middleboxes pentru la
+imbunatati experienta utilizatorilor, oferind in stimulente
+operatorilor de Internet de a rula aplicatii pentru clienti in
+mijlocul retelei.
+
+Este posibil sa cream o arhitectura in care middlebox-urile sa
+mareasca abilitatea noastra de a instala aplicatii noi in retea,
+permitand astfel Internetul-ui sa continua sa evolueze?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% introduction.tex ends here

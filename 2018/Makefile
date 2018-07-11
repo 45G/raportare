@@ -60,7 +60,7 @@ CEXCLUDE = --exclude=CVS --exclude=.cvs*  --exclude=.svn* --exclude=*.zip --excl
 	egrep "$(RERUN)|$(RERUNBIB)" $*.log && ($(COPY);$(PDFLATEX) $<) ; true
 	if cmp -s $*.toc $*.toc.bak; then echo "OK" ;else $(PDFLATEX) $< ; fi
 	$(RM) $*.toc.bak 
-	pdftk A=main.pdf B="Studiu conectare MPTCP în reţeaua ORO.pdf" cat A1-5 B A12-end output final.pdf
+	pdftk A=main.pdf B="Studiu conectare MPTCP în reţeaua ORO.pdf" cat A1-5 B A12-end output 2018.pdf
 
 
 .PHONY: default

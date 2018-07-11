@@ -1,0 +1,14 @@
+\chapter{Rezumatul Etapei}
+
+În acest raport prezentăm o descriere succintă a muncii depuse în anul 2018 în
+proiectul 4.5G: 
+\begin{itemize}
+
+\item implementare prototip SOCKSv6
+\item instrumentare telefoane Android și proxy
+\item deployment în rețeaua ORO 
+\item campanie de măsuratori
+\item diseminare la conforințe și standardizare
+\end{itemize}
+
+ 
